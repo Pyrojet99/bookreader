@@ -75,41 +75,30 @@ class TextSelectionPlugin {
       });
 
       $(XMLpage).find("LINE").each((i, line) => {
-        const lineArr = $(line).find("WORD")
-        for(i = 0; i < lineArr.length; i++) {
-          const currWord = lineArr[i];
+        const lineSvg = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        let lineString = "";
+        let [leftMin, bottomMax, rightMax, topMin] = [Infinity, 0, 0, Infinity];
+        $(line).find("WORD").each((i, word) => {
           // eslint-disable-next-line no-unused-vars
-          const [left, bottom, right, top] = $(currWord).attr("coords").split(',').map(parseFloat);
-          const textSvg = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          textSvg.setAttribute("x", left.toString());
-          textSvg.setAttribute("y", bottom.toString());
-          textSvg.setAttribute("font-size", (bottom - top).toString());
-          textSvg.setAttribute("textLength", (right - left).toString());
-          $(textSvg).css({
-            "fill": "red",
-            "cursor": "text",
-          });
-          const textNode = document.createTextNode(currWord.textContent);
-          textSvg.append(textNode);
-          svg.append(textSvg);
-          if(i < lineArr.length - 1){
-            const nextWord = lineArr[i + 1];
-            // eslint-disable-next-line no-unused-vars
-            const [leftNext, bottomNext, rightNext, topNext] = $(nextWord).attr("coords").split(',').map(parseFloat);
-            const spaceSvg = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            spaceSvg.setAttribute("x", right.toString());
-            spaceSvg.setAttribute("y", Math.max(bottom, bottomNext).toString());
-            spaceSvg.setAttribute("font-size", (Math.max(bottom, bottomNext) - Math.min(top, topNext)).toString());
-            spaceSvg.setAttribute("textLength", (leftNext - right).toString());
-            $(spaceSvg).css({
-              'white-space': 'pre',
-
-            });
-            const spaceTextNode = document.createTextNode(" ");
-            spaceSvg.append(spaceTextNode);
-            svg.append(spaceSvg);
-          }
-        }
+          const [left, bottom, right, top] = $(word).attr("coords").split(',').map(parseFloat);
+          if(left < leftMin) leftMin = left;
+          if(bottom > bottomMax) bottomMax = bottom;
+          if(right > rightMax) rightMax = right;
+          if(top < topMin) topMin = top;
+          lineString = lineString + " " + word.textContent;
+        });
+        lineSvg.setAttribute("x", leftMin.toString());
+        lineSvg.setAttribute("y", bottomMax.toString());
+        lineSvg.setAttribute("font-size", (bottomMax - topMin).toString());
+        lineSvg.setAttribute("textLength", (rightMax - leftMin).toString());
+        $(lineSvg).css({
+          // "fill": "red",
+          "cursor": "text",
+          "fill-opacity": "0",
+        });
+        const lineTextNode = document.createTextNode(lineString);
+        lineSvg.append(lineTextNode);
+        svg.append(lineSvg);
       })
       this.stopPageFlip($container);
     }
