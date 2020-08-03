@@ -57,6 +57,12 @@ $brZindexFullscreen: 2000;
 // These are the main root elements in BookReader
 $brScope: ".BookReader, .BRmobileMenu, .BRfloat";
 
+text::selection{
+    background: rgba($color: #08318a98, $alpha: 0.8);
+    fill: white;
+    fill-opacity: 1;
+}
+
 @import 'colorbox';
 @import 'BRmain';
 @import 'BRpages';

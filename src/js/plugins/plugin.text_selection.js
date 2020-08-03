@@ -92,9 +92,10 @@ class TextSelectionPlugin {
         lineSvg.setAttribute("font-size", (bottomMax - topMin).toString());
         lineSvg.setAttribute("textLength", (rightMax - leftMin).toString());
         $(lineSvg).css({
-          // "fill": "red",
+          //"fill": "red",
           "cursor": "text",
           "fill-opacity": "0",
+          "dominant-baseline": "text-after-edge",
         });
         const lineTextNode = document.createTextNode(lineString);
         lineSvg.append(lineTextNode);
